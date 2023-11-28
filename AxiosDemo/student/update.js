@@ -1,38 +1,33 @@
-async function showFormCreate(){
-    document.getElementById("main").innerHTML = `
+function getFormUpdate(id,classRoomId){
+    console.log(id);
+    axios.get('http://localhost:8080/students/update/'+id)
+        .then(async function (response) {
+            let student = response.data;
+            document.getElementById("main").innerHTML = `
       <div>
-        <label for="name">Name : </label><input type="text" id="name" placeholder="Name">
-        <label for="birthDay">BirthDay : </label><input type="date" id="birthDay">
-        <label for="gender">Gender : </label><input type="text" id="gender" placeholder="Gender">
-        <br>
-        <br>
-        <label for="fileButton">Image : </label><input type="file" id="fileButton" onchange="uploadImage(event)">
-        <input type="hidden" id="image" value="">
+        <label for="name">Name : </label><input type="text" id="name" placeholder="Name" value="${student.name}">
+        <label for="birthDay">BirthDay : </label><input type="date" id="birthDay" placeholder="Birth day" value="${student.birthDay}">
+        <label for="gender">Gender : </label><input type="text" id="gender" placeholder="Gender" value="${student.gender}">
         <label for="select">Class : </label><select name="classRoom" id="select">${await getClassRoom()}</select>
         <br>
         <br>
-        <label for="tutorList">Tutor : </label><ul id="tutorList">${await getAllTutor()}</ul>
-        <div id="imgDiv" style="height: 100px;width: 100px"></div>
-        <button onclick="create()">Commit</button>
+        <label for="fileButton">Image : </label><input type="file" id="fileButton" onchange="uploadImage(event)">
+        <input type="hidden" id="image" value="${student.image}">
+         <div id="imgDiv" style="height: 100px;width: 100px"></div>
+        <button onclick="update(${student.id})">Commit</button>
     </div>
     `
+            document.getElementById("select").value = classRoomId;
+        })
+
 }
-function create() {
+
+function update(id) {
     let name = document.getElementById("name").value;
     let birthDay = document.getElementById("birthDay").value;
     let gender = document.getElementById("gender").value;
     let idClassRoom = document.getElementById("select").value;
     let image = document.getElementById("image").value;
-    let tutorsHTML = document.getElementsByClassName("tutors-check");
-    let tutors = [];
-
-    for (let i = 0; i < tutorsHTML.length; i++) {
-        if (tutorsHTML[i].checked) {
-            tutors.push({id: tutorsHTML[i].value})
-        }
-    }
-
-    console.log(tutors)
 
     let student = {
         name: name,
@@ -41,15 +36,16 @@ function create() {
         classRoom: {
             id: idClassRoom
         },
-        image: image,
-        tutors : tutors
-
+        image: image
     }
-    axios.post('http://localhost:8080/students/create', student)
-        .then(function (response) {
+
+
+    axios.put('http://localhost:8080/students/update/'+id, student)
+        .then(function () {
             getAll()
         })
 }
+
 function uploadImage(e) {
     let fbBucketName = 'images';
     let uploader = document.getElementById('uploader');
@@ -77,9 +73,7 @@ function uploadImage(e) {
         }, function () {
             let downloadURL = uploadTask.snapshot.downloadURL;
             console.log(downloadURL)
-            document.getElementById('imgDiv').innerHTML = `<img src="${downloadURL}" alt="" style="width: 150px;height: 150px">`
+            document.getElementById('imgDiv').innerHTML = `<img src="${downloadURL}" alt="" style="height: 100px;width: 100px">`
             document.getElementById("image").value = downloadURL;
         });
 }
-
-

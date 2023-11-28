@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing file upload</title>
+</head>
+<body>
+<input type="file" id="fileButton" onchange="uploadImage(event)">
+<h1>Hello GFG</h1>
+<div id="imgDiv"></div>
+<script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAJ-rB_m2lE4-cv7wFyPWfuqVEEsIX7WBI",
+    authDomain: "testfirebase-7e10f.firebaseapp.com",
+    projectId: "testfirebase-7e10f",
+    storageBucket: "testfirebase-7e10f.appspot.com",
+    messagingSenderId: "48069167220",
+    appId: "1:48069167220:web:7063632e7e9c589b85a921",
+    measurementId: "G-QV9K7X49P7"
+  };
+  firebase.initializeApp(firebaseConfig);
+</script>
+
+<script type="text/javascript">
+  function uploadImage(e) {
+    let fbBucketName = 'images';
+    let uploader = document.getElementById('uploader');
+    let file = e.target.files[0];
+    let storageRef = firebase.storage().ref(`${fbBucketName}/${file.name}`);
+    let uploadTask = storageRef.put(file);
+    uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+            function (snapshot) {
+              uploader.value = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              switch (snapshot.state) {
+                case firebase.storage.TaskState.PAUSED:
+                  break;
+                case firebase.storage.TaskState.RUNNING:
+                  break;
+              }
+            }, function (error) {
+              switch (error.code) {
+                case 'storage/unauthorized':
+                  break;
+                case 'storage/canceled':
+                  break;
+                case 'storage/unknown':
+                  break;
+              }
+            }, function () {
+              let downloadURL = uploadTask.snapshot.downloadURL;
+              console.log(downloadURL)
+              document.getElementById('imgDiv').innerHTML = `<img src="${downloadURL}" alt="">`
+              localStorage.setItem('image', downloadURL);
+            });
+  }
+</script>
+
+</body>
+
+</html>
