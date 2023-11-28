@@ -1,0 +1,30 @@
+.t-body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+}
+.logo {
+    height: 150px;
+    width: 100%;
+    background-color: burlywood;
+}
+.main {
+    display: flex;
+    width: 100%;
+    height: auto;
+    justify-content: center;
+}
+table {
+    width: 70%;
+    height: auto;
+}
+tr,th, td {
+    border: 1px solid gray;
+}
+.nav {
+    margin-top: 12px;
+}
